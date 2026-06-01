@@ -55,7 +55,20 @@ Results should be ordered from most to least relevant (lowest to highest distanc
 *Sketch out what one item in your return list looks like as a concrete example. Where does each field come from in the query results?*
 
 ```
-[your answer here]
+One item in the return list looks like:
+
+{
+  "text": "When a 7 is rolled, no one collects any resources...",
+  "game": "Catan",
+  "distance": 0.142
+}
+
+Where each field comes from:
+- "text"     → results["documents"][0][i]
+- "game"     → results["metadatas"][0][i]["game"]
+- "distance" → results["distances"][0][i]
+
+where i is the index of each result in the list.
 ```
 
 ---
@@ -65,7 +78,16 @@ Results should be ordered from most to least relevant (lowest to highest distanc
 *`_collection.query()` returns nested lists. Describe what index you need to access to get the actual list of results for a single query, and why the nesting exists.*
 
 ```
-[your answer here]
+_collection.query() returns nested lists because it supports multiple 
+queries at once. Since we only pass one query at a time, our results 
+are always at index [0]:
+
+  results["documents"][0]  → list of chunk texts
+  results["metadatas"][0]  → list of metadata dicts
+  results["distances"][0]  → list of distance scores
+
+Accessing results["documents"] without [0] returns a list of lists,
+not the actual chunks — this is the most common indexing bug.
 ```
 
 ---
@@ -75,7 +97,11 @@ Results should be ordered from most to least relevant (lowest to highest distanc
 *Will you filter out results above a certain distance score, or return all `n_results` regardless of how relevant they are? What are the tradeoffs of each approach?*
 
 ```
-[your answer here]
+Return all n_results without filtering. If a query matches no chunks 
+well, the LLM will receive weak context but can still say it doesn't 
+know. Filtering risks discarding valid chunks for niche questions that 
+naturally produce higher distances. The tradeoff: more noise in context 
+vs. risk of returning nothing useful.
 ```
 
 ---
@@ -97,14 +123,19 @@ Results should be ordered from most to least relevant (lowest to highest distanc
 **Test query and top result returned:**
 
 ```
-Query: [your test query]
-Top result game: [game name]
-Distance score: [score]
-Does it make sense? [yes / no / explain]
+Query: What happens when you roll a 7 in Catan?
+Top result game: Catan
+Distance score: 0.471
+Does it make sense? Yes, the chunk mentions hex resources and rolling,
+which is related to the 7/robber mechanic, though not a perfect match.
 ```
 
 **One thing about the query results that surprised you:**
 
 ```
-[your answer here]
+
+Distance scores were higher than expected (0.471–0.625). Even a 
+directly relevant Catan chunk scored ~0.47, suggesting 300-character 
+chunks may be too small to carry strong semantic signal for this query.
+
 ```

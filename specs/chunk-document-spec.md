@@ -116,11 +116,13 @@ handle these cases better, at the cost of more implementation complexity.
 **Actual chunk count produced across all 8 rule books:**
 
 ```
-[your answer here]
+149 chunks
 ```
 
 **One thing that surprised you or didn't match your expectations:**
 
 ```
-[your answer here]
+- The chunk count is lower than expected because rule books are more concise than I thought
+- I was surprised how evenly the chunks distributed across all 8 games
+- The overlap strategy seems to work well because there were no obvious content loss at boundaries
 ```
