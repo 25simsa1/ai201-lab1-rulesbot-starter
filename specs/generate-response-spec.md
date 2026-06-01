@@ -78,7 +78,8 @@ contained in the passages, say so clearly.
 *Write the exact instruction you will use to tell the model to identify which game its answer comes from.*
 
 ```
-[your answer here]
+Always identify which game your answer comes from by name 
+(e.g. "According to the Catan rules...").
 ```
 
 ---
@@ -88,7 +89,10 @@ contained in the passages, say so clearly.
 *What should the response say when the answer isn't found in the loaded rule books? Write the exact fallback message.*
 
 ```
-[your answer here]
+I couldn't find an answer to that in the loaded rule books. 
+Try rephrasing your question or ask about a specific game: 
+Catan, Clue, Codenames, Monopoly, Pandemic, Risk, 
+Ticket to Ride, or Uno.
 ```
 
 ---
@@ -98,7 +102,11 @@ contained in the passages, say so clearly.
 *`retrieved_chunks` may include chunks with high distance scores (weak relevance). Will you filter these out before building context, pass them all in, or handle them another way? What are the tradeoffs?*
 
 ```
-[your answer here]
+Pass all retrieved chunks in regardless of distance score.
+Tradeoff: may include weak context, but the system prompt 
+instructs the model to only answer from the provided text — 
+if no chunk is relevant, the model should say so. Filtering 
+risks discarding the only available context for niche questions.
 ```
 
 ---
@@ -108,7 +116,14 @@ contained in the passages, say so clearly.
 *Describe how you will structure the messages list for the API call — what goes in the system message vs. the user message?*
 
 ```
-[your answer here]
+System message: grounding instruction + citation instruction + 
+                the formatted rule passages as context
+
+User message: the user's original question
+
+Keeping context in the system message separates it clearly 
+from the question, and reinforces that it's the authoritative 
+source the model must use.
 ```
 
 ---
@@ -120,14 +135,16 @@ contained in the passages, say so clearly.
 **Test query and response:**
 
 ```
-Query: [your test query]
-Response: [abbreviated response]
-Correctly grounded? [yes / no]
-Cited the right game? [yes / no]
+Query: How do you set up the board in Catan?
+Response: According to the Catan rules, arrange terrain hexes randomly...
+Correctly grounded? Yes
+Cited the right game? Yes
+
+
 ```
 
 **One thing you changed from your original spec after seeing the actual output:**
 
 ```
-[your answer here]
+Nothing major, grounding instruction worked as written on the first try.
 ```
